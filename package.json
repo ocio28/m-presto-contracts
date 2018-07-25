@@ -1,12 +1,12 @@
 {
   "name": "m-presto-contracts",
   "version": "0.1.0",
-  "main": "index.js",
+  "main": "artifact-index.js",
   "author": "Andres Santande <https://t.me/ocio28>",
   "license": "MIT",
-  "main": "artifact-index.js",
   "dependencies": {
     "ganache-cli": "^6.1.6",
+    "openzeppelin-solidity": "1.11.0",
     "truffle-hdwallet-provider": "^0.0.5"
   }
 }

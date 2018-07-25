@@ -1,13 +1,15 @@
 pragma solidity ^0.4.4;
-
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
 contract MPresto {
+  using SafeMath for uint256;
+
   struct Item {
     string name;
     uint quantity;
   }
 
-  mapping(uint => address) itemToOwner;
+  mapping(uint => address) public itemToOwner;
   mapping(address => uint) ownerItemCount;
 
   Item[] public items;
@@ -32,5 +34,13 @@ contract MPresto {
     return result;
   }
 
+  function transfer(address _to, uint _itemId) public {
+    ownerItemCount[_to] = ownerItemCount[_to].add(1);
+    ownerItemCount[msg.sender] = ownerItemCount[msg.sender].sub(1);
+    itemToOwner[_itemId] = _to;
+    emit Transfer(msg.sender, _to, _itemId);
+  }
+
   event NewItem(uint id, string name, uint quantity);
+  event Transfer(address indexed _from, address indexed _to, uint256 _tokenId);
 }

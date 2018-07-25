@@ -19,5 +19,18 @@ contract MPresto {
     emit NewItem(id, _name, _quantity);
   }
 
+  function getItemsByOwner(address _owner) public view returns (uint[]) {
+    uint[] memory result = new uint[](ownerItemCount[_owner]);
+    uint counter = 0;
+    for (uint i = 0; i < items.length; i++) {
+      if (itemToOwner[i] == _owner) {
+        result[counter] = i;
+        counter++;
+      }
+    }
+
+    return result;
+  }
+
   event NewItem(uint id, string name, uint quantity);
 }

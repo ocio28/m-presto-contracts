@@ -4,9 +4,15 @@
   "main": "artifact-index.js",
   "author": "Andres Santande <https://t.me/ocio28>",
   "license": "MIT",
+  "scripts": {
+    "deploy-rinkeby": "./node_modules/.bin/truffle migrate --network rinkeby",
+  },
   "dependencies": {
     "ganache-cli": "^6.1.6",
     "openzeppelin-solidity": "1.11.0",
     "truffle-hdwallet-provider": "^0.0.5"
+  },
+  "devDependencies": {
+    "truffle": "^4.1.13"
   }
 }

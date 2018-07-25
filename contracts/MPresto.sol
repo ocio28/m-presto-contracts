@@ -35,6 +35,7 @@ contract MPresto {
   }
 
   function transfer(address _to, uint _itemId) public {
+    require(itemToOwner[_itemId] == msg.sender, 'Deny');
     ownerItemCount[_to] = ownerItemCount[_to].add(1);
     ownerItemCount[msg.sender] = ownerItemCount[msg.sender].sub(1);
     itemToOwner[_itemId] = _to;

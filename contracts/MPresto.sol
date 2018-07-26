@@ -54,12 +54,14 @@ contract MPresto {
 
   function setNickname(bytes32 _nickname) public {
     require(nicknames[_nickname] == 0x0);
+    bytes32 current = ownerNickname[msg.sender];
     nicknames[_nickname] = msg.sender;
+    nicknames[current] = 0x0;
     ownerNickname[msg.sender] = _nickname;
-    emit ChangeNickname(_nickname, msg.sender);
+    emit ChangeNickname(current, _nickname, msg.sender);
   }
 
   event NewItem(uint id, string name, uint quantity);
   event Transfer(address indexed _from, address indexed _to, uint256 _tokenId);
-  event ChangeNickname(bytes32 _nickname, address indexed _owner);
+  event ChangeNickname(bytes32 _from, bytes32 _to, address indexed _owner);
 }

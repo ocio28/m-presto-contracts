@@ -1,6 +1,6 @@
 {
   "name": "m-presto-contracts",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "main": "artifact-index.js",
   "author": "Andres Santande <https://t.me/ocio28>",
   "license": "MIT",

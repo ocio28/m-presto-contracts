@@ -1,55 +1,49 @@
-pragma solidity ^0.4.4;
+pragma solidity ^0.4.24;
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
+import "openzeppelin-solidity/contracts/token/ERC721/ERC721Full.sol";
 
-contract MPresto {
+contract MPresto is ERC721Full {
   using SafeMath for uint256;
 
   struct Item {
     string name;
-    uint quantity;
+    uint256 quantity;
   }
-
-  mapping(uint => address) public itemToOwner;
-  mapping(address => uint) ownerItemCount;
 
   Item[] public items;
 
   mapping(bytes32 => address) public nicknames;
   mapping(address => bytes32) public ownerNickname;
 
-  function createItem(string _name, uint _quantity) public {
-    uint id = items.push(Item(_name, _quantity)) - 1;
-    itemToOwner[id] = msg.sender;
-    ownerItemCount[msg.sender]++;
+  constructor () ERC721Full("MPresto", "MPTO") public {}
+
+  function createItem(string _name, uint256 _quantity) public {
+    uint256 id = items.push(Item(_name, _quantity)).sub(1);
+    _mint(msg.sender, id);
     emit NewItem(id, _name, _quantity);
   }
 
-  function getItem(uint _itemId) public view returns (string, uint, address, bytes32) {
-    Item storage item = items[_itemId];
-    address owner = itemToOwner[_itemId];
+  function getItem(uint256 _id) public view returns (string, uint256, address, bytes32) {
+    require(_id < items.length);
+    Item storage item = items[_id];
+    address owner = ownerOf(_id);
     bytes32 nickname = ownerNickname[owner];
     return (item.name, item.quantity, owner, nickname);
   }
 
-  function getItemsByOwner(address _owner) public view returns (uint[]) {
-    uint[] memory result = new uint[](ownerItemCount[_owner]);
-    uint counter = 0;
-    for (uint i = 0; i < items.length; i++) {
-      if (itemToOwner[i] == _owner) {
-        result[counter] = i;
-        counter++;
-      }
+  function getItemsByOwner(address _owner) public view returns (uint256[]) {
+    uint256 total = balanceOf(_owner);
+    uint256[] memory result = new uint256[](total);
+
+    for (uint256 i = 0; i < total; i++) {
+      result[i] = tokenOfOwnerByIndex(_owner, i);
     }
 
     return result;
   }
 
-  function transfer(address _to, uint _itemId) public {
-    require(itemToOwner[_itemId] == msg.sender, 'Deny');
-    ownerItemCount[_to] = ownerItemCount[_to].add(1);
-    ownerItemCount[msg.sender] = ownerItemCount[msg.sender].sub(1);
-    itemToOwner[_itemId] = _to;
-    emit Transfer(msg.sender, _to, _itemId);
+  function transfer(address _to, uint256 _id) public {
+    transferFrom(msg.sender, _to, _id);
   }
 
   function setNickname(bytes32 _nickname) public {
@@ -61,7 +55,6 @@ contract MPresto {
     emit ChangeNickname(current, _nickname, msg.sender);
   }
 
-  event NewItem(uint id, string name, uint quantity);
-  event Transfer(address indexed _from, address indexed _to, uint256 _tokenId);
+  event NewItem(uint256 id, string name, uint256 quantity);
   event ChangeNickname(bytes32 _from, bytes32 _to, address indexed _owner);
 }
